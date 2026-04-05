@@ -1,6 +1,6 @@
 context:
   name: liteparse
-  version: 1.4.2
+  version: "1.4.4"
 
 package:
   name: ${{ name }}
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://registry.npmjs.org/@llamaindex/liteparse/-/liteparse-${{ version }}.tgz
-  sha256: a0358ede9e4968d8032399e260093eb7b74334a13537d6514dfce131eaa2a58c
+  sha256: dcdcc82f5bdcd8551d2bb0538383c5ac071dac6a30bb333011354a92191e1ee6
 
 build:
   number: 0

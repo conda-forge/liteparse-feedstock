@@ -3,11 +3,37 @@ About liteparse-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/liteparse-feedstock/blob/main/LICENSE.txt)
 
+
+About liteparse
+---------------
+
 Home: https://github.com/run-llama/liteparse
 
 Package license: Apache-2.0
 
-Summary: Open-source PDF parsing with spatial text extraction and OCR processing
+Summary: Fast, lightweight document parsing CLI
+
+Development: https://github.com/run-llama/liteparse
+
+About python-liteparse
+----------------------
+
+Home: https://github.com/run-llama/liteparse
+
+Package license: Apache-2.0
+
+Summary: Python bindings for LiteParse document parsing
+
+Development: https://github.com/run-llama/liteparse
+
+About liteparse-split
+---------------------
+
+Home: https://github.com/run-llama/liteparse
+
+Package license: Apache-2.0
+
+Summary: Open-source document parsing with spatial text extraction and OCR processing
 
 Development: https://github.com/run-llama/liteparse
 
@@ -36,31 +62,24 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>osx_64_nodejs24</td>
+              <td>osx_64</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27952&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_nodejs24" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_" alt="variant">
                 </a>
               </td>
             </tr><tr>
-              <td>osx_64_nodejs26</td>
+              <td>osx_arm64</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27952&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_nodejs26" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_arm64_" alt="variant">
                 </a>
               </td>
             </tr><tr>
-              <td>osx_arm64_nodejs24</td>
+              <td>win_64</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27952&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_arm64_nodejs24" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>osx_arm64_nodejs26</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27952&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_arm64_nodejs26" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/liteparse-feedstock?branchName=main&jobName=win&configuration=win%20win_64_" alt="variant">
                 </a>
               </td>
             </tr>
@@ -77,6 +96,7 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-liteparse-green.svg)](https://anaconda.org/conda-forge/liteparse) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/liteparse.svg)](https://anaconda.org/conda-forge/liteparse) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/liteparse.svg)](https://anaconda.org/conda-forge/liteparse) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/liteparse.svg)](https://anaconda.org/conda-forge/liteparse) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-python--liteparse-green.svg)](https://anaconda.org/conda-forge/python-liteparse) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/python-liteparse.svg)](https://anaconda.org/conda-forge/python-liteparse) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/python-liteparse.svg)](https://anaconda.org/conda-forge/python-liteparse) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/python-liteparse.svg)](https://anaconda.org/conda-forge/python-liteparse) |
 
 Installing liteparse
 ====================
@@ -88,16 +108,16 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `liteparse` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `liteparse, python-liteparse` can be installed with `conda`:
 
 ```
-conda install liteparse
+conda install liteparse python-liteparse
 ```
 
 or with `mamba`:
 
 ```
-mamba install liteparse
+mamba install liteparse python-liteparse
 ```
 
 It is possible to list all of the versions of `liteparse` available on your platform with `conda`:

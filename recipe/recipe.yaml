@@ -54,9 +54,13 @@ outputs:
               - export PDFIUM_DYLIB="libpdfium.dylib"
           - export PDFIUM_LIB_PATH="${PDFIUM_ROOT}/lib"
           - export PDFIUM_INCLUDE_PATH="${PDFIUM_ROOT}/include"
+          - export OPENSSL_DIR="${BUILD_PREFIX}"
+          - if: linux
+            then:
+              - ln -sf "${CXX}" "${BUILD_PREFIX}/bin/g++"
           - cargo fetch
           - cargo update --workspace --offline
-          - cargo auditable install --locked --no-default-features --path crates/liteparse --root ${{ PREFIX }} --no-track
+          - cargo auditable install --locked --no-default-features --features tesseract --path crates/liteparse --root ${{ PREFIX }} --no-track
           - cp "${PDFIUM_LIB_PATH}/${PDFIUM_DYLIB}" "${PREFIX}/bin/${PDFIUM_DYLIB}"
           - cp "${PDFIUM_ROOT}/LICENSE" PDFIUM-LICENSE
           - cp -R "${PDFIUM_ROOT}/licenses" pdfium-licenses
@@ -68,8 +72,11 @@ outputs:
         - ${{ compiler('cxx') }}
         - ${{ compiler('rust') }}
         - ${{ stdlib('c') }}
+        - cmake
         - cargo-auditable
         - cargo-bundle-licenses
+        - openssl
+        - pkg-config
 
     tests:
       - script:
@@ -113,10 +120,14 @@ outputs:
               - export PDFIUM_DYLIB="libpdfium.dylib"
           - export PDFIUM_LIB_PATH="${PDFIUM_ROOT}/lib"
           - export PDFIUM_INCLUDE_PATH="${PDFIUM_ROOT}/include"
+          - export OPENSSL_DIR="${BUILD_PREFIX}"
+          - if: linux
+            then:
+              - ln -sf "${CXX}" "${BUILD_PREFIX}/bin/g++"
           - cp "${PDFIUM_LIB_PATH}/${PDFIUM_DYLIB}" "liteparse/${PDFIUM_DYLIB}"
           - cargo fetch
           - cargo update --workspace --offline
-          - maturin build --release --locked --no-default-features --interpreter ${{ PYTHON }} --out dist
+          - maturin build --release --locked --no-default-features --features tesseract --interpreter ${{ PYTHON }} --out dist
           - ${{ PYTHON }} -m pip install dist/*.whl -vv --no-deps --no-build-isolation
           - rm -f "${PREFIX}/bin/lit"
           - cp "${PDFIUM_ROOT}/LICENSE" PDFIUM-LICENSE
@@ -134,7 +145,10 @@ outputs:
         - ${{ compiler('cxx') }}
         - ${{ compiler('rust') }}
         - ${{ stdlib('c') }}
+        - cmake
         - cargo-bundle-licenses
+        - openssl
+        - pkg-config
       host:
         - python
         - maturin

@@ -73,6 +73,7 @@ outputs:
         - ${{ compiler('rust') }}
         - ${{ stdlib('c') }}
         - cmake
+        - make
         - cargo-auditable
         - cargo-bundle-licenses
         - openssl
@@ -146,6 +147,7 @@ outputs:
         - ${{ compiler('rust') }}
         - ${{ stdlib('c') }}
         - cmake
+        - make
         - cargo-bundle-licenses
         - openssl
         - pkg-config

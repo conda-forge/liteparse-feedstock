@@ -128,7 +128,7 @@ outputs:
           - cp "${PDFIUM_LIB_PATH}/${PDFIUM_DYLIB}" "liteparse/${PDFIUM_DYLIB}"
           - cargo fetch
           - cargo update --workspace --offline
-          - maturin build --release --locked --no-default-features --features tesseract --interpreter ${{ PYTHON }} --out dist
+          - maturin build --release --locked --no-default-features --features tesseract --compatibility linux --interpreter ${{ PYTHON }} --out dist
           - ${{ PYTHON }} -m pip install dist/*.whl -vv --no-deps --no-build-isolation
           - rm -f "${PREFIX}/bin/lit"
           - cp "${PDFIUM_ROOT}/LICENSE" PDFIUM-LICENSE

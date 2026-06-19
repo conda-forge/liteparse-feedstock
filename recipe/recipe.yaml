@@ -3,7 +3,7 @@ schema_version: 1
 
 context:
   name: liteparse
-  version: "2.0.8"
+  version: "2.1.1"
 
 recipe:
   name: ${{ name }}-split
@@ -11,7 +11,7 @@ recipe:
 
 source:
   - url: https://pypi.org/packages/source/l/liteparse/liteparse-${{ version }}.tar.gz
-    sha256: c03b7b32508cf35e7ee01ea3fa7dd5d45592bc4a7c42696f7505e445ad5474c4
+    sha256: 4599d34efdf10ff2c12c4a81ce7011bc5f95baed5b9b7602d2a7bb255cafe1d4
   - url: https://raw.githubusercontent.com/run-llama/liteparse/ae1ae83f527b016d4f318ee27023381109702425/LICENSE
     sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
     file_name: LICENSE
@@ -26,7 +26,7 @@ source:
     target_directory: pdfium-mac-arm64
 
 build:
-  number: 2
+  number: 1
 
 outputs:
   - package:

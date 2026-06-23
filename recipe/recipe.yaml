@@ -18,6 +18,9 @@ source:
   - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-x64.tgz
     sha256: af96f21fd8e9d53955013dad1d17b003d0120025e787b7ce611a685d57287594
     target_directory: pdfium-linux-x64
+  - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-arm64.tgz
+    sha256: e81ec447dd00097eb2fc26cff88be53ea321495711a43af9ea7b50bebdea9226
+    target_directory: pdfium-linux-arm64
   - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-x64.tgz
     sha256: dea5c9cdedcbdc7b1ce72bf845a2ec8bda1b9d23a5eef0b61e2d217f8b4477d3
     target_directory: pdfium-mac-x64
@@ -40,9 +43,13 @@ outputs:
           CARGO_PROFILE_RELEASE_STRIP: symbols
           CARGO_PROFILE_RELEASE_LTO: fat
         content:
-          - if: linux
+          - if: linux and x86_64
             then:
               - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-x64"
+              - export PDFIUM_DYLIB="libpdfium.so"
+          - if: linux and aarch64
+            then:
+              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-arm64"
               - export PDFIUM_DYLIB="libpdfium.so"
           - if: osx and x86_64
             then:
@@ -111,9 +118,13 @@ outputs:
           CARGO_PROFILE_RELEASE_STRIP: symbols
           CARGO_PROFILE_RELEASE_LTO: fat
         content:
-          - if: linux
+          - if: linux and x86_64
             then:
               - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-x64"
+              - export PDFIUM_DYLIB="libpdfium.so"
+          - if: linux and aarch64
+            then:
+              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-arm64"
               - export PDFIUM_DYLIB="libpdfium.so"
           - if: osx and x86_64
             then:

@@ -15,21 +15,29 @@ source:
   - url: https://raw.githubusercontent.com/run-llama/liteparse/ae1ae83f527b016d4f318ee27023381109702425/LICENSE
     sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
     file_name: LICENSE
-  - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-x64.tgz
-    sha256: af96f21fd8e9d53955013dad1d17b003d0120025e787b7ce611a685d57287594
-    target_directory: pdfium-linux-x64
-  - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-arm64.tgz
-    sha256: e81ec447dd00097eb2fc26cff88be53ea321495711a43af9ea7b50bebdea9226
-    target_directory: pdfium-linux-arm64
-  - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-x64.tgz
-    sha256: dea5c9cdedcbdc7b1ce72bf845a2ec8bda1b9d23a5eef0b61e2d217f8b4477d3
-    target_directory: pdfium-mac-x64
-  - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-arm64.tgz
-    sha256: 954cd315ff7d7ec51824cc6289ad1b00a0981533cb9762a56fd122bcaa12cd27
-    target_directory: pdfium-mac-arm64
+  - if: linux and x86_64
+    then:
+      - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-x64.tgz
+        sha256: af96f21fd8e9d53955013dad1d17b003d0120025e787b7ce611a685d57287594
+        target_directory: pdfium-linux-x64
+  - if: linux and aarch64
+    then:
+      - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-linux-arm64.tgz
+        sha256: e81ec447dd00097eb2fc26cff88be53ea321495711a43af9ea7b50bebdea9226
+        target_directory: pdfium-linux-arm64
+  - if: osx and x86_64
+    then:
+      - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-x64.tgz
+        sha256: dea5c9cdedcbdc7b1ce72bf845a2ec8bda1b9d23a5eef0b61e2d217f8b4477d3
+        target_directory: pdfium-mac-x64
+  - if: osx and arm64
+    then:
+      - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-arm64.tgz
+        sha256: 954cd315ff7d7ec51824cc6289ad1b00a0981533cb9762a56fd122bcaa12cd27
+        target_directory: pdfium-mac-arm64
 
 build:
-  number: 2
+  number: 3
 
 outputs:
   - package:

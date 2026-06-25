@@ -3,7 +3,7 @@ schema_version: 1
 
 context:
   name: liteparse
-  version: "2.1.1"
+  version: "2.2.0"
 
 recipe:
   name: ${{ name }}-split
@@ -11,7 +11,7 @@ recipe:
 
 source:
   - url: https://pypi.org/packages/source/l/liteparse/liteparse-${{ version }}.tar.gz
-    sha256: 4599d34efdf10ff2c12c4a81ce7011bc5f95baed5b9b7602d2a7bb255cafe1d4
+    sha256: 46d8a74a2a69ecb05aa1287d569f12f9375a2ada22ef60022b119b1896920de1
   - url: https://raw.githubusercontent.com/run-llama/liteparse/ae1ae83f527b016d4f318ee27023381109702425/LICENSE
     sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
     file_name: LICENSE
@@ -37,7 +37,7 @@ source:
         target_directory: pdfium-mac-arm64
 
 build:
-  number: 3
+  number: 0
 
 outputs:
   - package:
@@ -99,7 +99,9 @@ outputs:
       - script:
           - lit --help
           - test -f "${PREFIX}/lib/libpdfium.dylib" || test -f "${PREFIX}/lib/libpdfium.so"
-          - printf '%s\n' '%PDF-1.1' '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj' '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj' '3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj' '4 0 obj << /Length 44 >> stream' 'BT /F1 12 Tf 72 120 Td (Hello LiteParse) Tj ET' 'endstream endobj' '5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj' 'xref' '0 6' '0000000000 65535 f ' '0000000009 00000 n ' '0000000060 00000 n ' '0000000117 00000 n ' '0000000251 00000 n ' '0000000345 00000 n ' 'trailer << /Root 1 0 R /Size 6 >>' 'startxref' '415' '%%EOF' > smoke.pdf
+          - printf '%s\n' '%PDF-1.1' '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj' '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj' '3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj' '4 0 obj << /Length 44 >> stream' 'BT /F1 12 
+            Tf 72 120 Td (Hello LiteParse) Tj ET' 'endstream endobj' '5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj' 'xref' '0 6' '0000000000 65535 f ' '0000000009 00000 n ' '0000000060 00000 n ' '0000000117 00000 n ' '0000000251 00000 n ' '0000000345 00000 n ' 'trailer << /Root 1 0 R /Size 6 
+            >>' 'startxref' '415' '%%EOF' > smoke.pdf
           - lit parse smoke.pdf
       - package_contents:
           bin:

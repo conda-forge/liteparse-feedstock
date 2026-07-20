@@ -3,15 +3,15 @@ schema_version: 1
 
 context:
   name: liteparse
-  version: "2.6.0"
+  version: "2.7.0"
 
 recipe:
   name: ${{ name }}-split
   version: ${{ version }}
 
 source:
-  - url: https://pypi.org/packages/source/l/liteparse/liteparse-${{ version }}.tar.gz
-    sha256: 12a11f9df9ced1a4bae2fc106e0c88dae18ac2d28d9280fdf31b2eb5f14f935e
+  - url: https://pypi.org/packages/source/l/liteparse/${{ name }}-${{ version }}.tar.gz
+    sha256: 6f27705d3a115327268c2945780fff94a3d6f28a214ad3bda1326f4f9d6aa28a
   - url: https://raw.githubusercontent.com/run-llama/liteparse/ae1ae83f527b016d4f318ee27023381109702425/LICENSE
     sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
     file_name: LICENSE

@@ -35,6 +35,11 @@ source:
       - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-mac-arm64.tgz
         sha256: 954cd315ff7d7ec51824cc6289ad1b00a0981533cb9762a56fd122bcaa12cd27
         target_directory: pdfium-mac-arm64
+  - if: win and x86_64
+    then:
+      - url: https://github.com/run-llama/pdfium-binaries/releases/download/chromium%2F7897/pdfium-win-x64.tgz
+        sha256: fde13b38344b4db1df270737ceb15adb94ce3e31c6de4f1b56f02bfdb4e6b533
+        target_directory: pdfium-win-x64
 
 build:
   number: 0
@@ -47,39 +52,52 @@ outputs:
     build:
       skip: ppc64le
       script:
+        interpreter: nu
         env:
           CARGO_PROFILE_RELEASE_STRIP: symbols
           CARGO_PROFILE_RELEASE_LTO: fat
         content:
           - if: linux and x86_64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-x64"
-              - export PDFIUM_DYLIB="libpdfium.so"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-linux-x64"
+              - $env.PDFIUM_DYLIB = "libpdfium.so"
           - if: linux and aarch64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-arm64"
-              - export PDFIUM_DYLIB="libpdfium.so"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-linux-arm64"
+              - $env.PDFIUM_DYLIB = "libpdfium.so"
           - if: osx and x86_64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-mac-x64"
-              - export PDFIUM_DYLIB="libpdfium.dylib"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-mac-x64"
+              - $env.PDFIUM_DYLIB = "libpdfium.dylib"
           - if: osx and arm64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-mac-arm64"
-              - export PDFIUM_DYLIB="libpdfium.dylib"
-          - export PDFIUM_LIB_PATH="${PDFIUM_ROOT}/lib"
-          - export PDFIUM_INCLUDE_PATH="${PDFIUM_ROOT}/include"
-          - export OPENSSL_DIR="${BUILD_PREFIX}"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-mac-arm64"
+              - $env.PDFIUM_DYLIB = "libpdfium.dylib"
+          - if: win and x86_64
+            then:
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-win-x64"
+              - $env.PDFIUM_DYLIB = "pdfium.dll"
+          - $env.PDFIUM_LIB_PATH = $"($env.PDFIUM_ROOT)/lib"
+          - $env.PDFIUM_INCLUDE_PATH = $"($env.PDFIUM_ROOT)/include"
+          - $env.OPENSSL_DIR = $env.BUILD_PREFIX
           - if: linux
             then:
-              - ln -sf "${CXX}" "${BUILD_PREFIX}/bin/g++"
+              - ln -sf $env.CXX $"($env.BUILD_PREFIX)/bin/g++"
+          - if: win
+            then:
+              - $env.CMAKE_GENERATOR = "Ninja"
           - cargo fetch
           - cargo update --workspace --offline
           - cargo auditable install --locked --no-default-features --features tesseract --path crates/liteparse --root ${{ PREFIX }} --no-track
-          - mkdir -p "${PREFIX}/lib"
-          - cp "${PDFIUM_LIB_PATH}/${PDFIUM_DYLIB}" "${PREFIX}/lib/${PDFIUM_DYLIB}"
-          - cp "${PDFIUM_ROOT}/LICENSE" PDFIUM-LICENSE
-          - cp -R "${PDFIUM_ROOT}/licenses" pdfium-licenses
+          - if: win
+            then:
+              - mkdir $"($env.PREFIX)/Library/bin"
+              - cp $"($env.PDFIUM_ROOT)/bin/($env.PDFIUM_DYLIB)" $"($env.PREFIX)/Library/bin/($env.PDFIUM_DYLIB)"
+            else:
+              - mkdir $"($env.PREFIX)/lib"
+              - cp $"($env.PDFIUM_LIB_PATH)/($env.PDFIUM_DYLIB)" $"($env.PREFIX)/lib/($env.PDFIUM_DYLIB)"
+          - cp $"($env.PDFIUM_ROOT)/LICENSE" PDFIUM-LICENSE
+          - cp -r $"($env.PDFIUM_ROOT)/licenses" pdfium-licenses
           - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
 
     requirements:
@@ -90,19 +108,45 @@ outputs:
         - ${{ stdlib('c') }}
         - cmake
         - make
+        - nushell
         - cargo-auditable
         - cargo-bundle-licenses
         - openssl
         - pkg-config
+        - if: win
+          then:
+            - ninja
 
     tests:
       - script:
-          - lit --help
-          - test -f "${PREFIX}/lib/libpdfium.dylib" || test -f "${PREFIX}/lib/libpdfium.so"
-          - printf '%s\n' '%PDF-1.1' '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj' '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj' '3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj' '4 0 obj << /Length 44 >> stream' 'BT /F1 12
-            Tf 72 120 Td (Hello LiteParse) Tj ET' 'endstream endobj' '5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj' 'xref' '0 6' '0000000000 65535 f ' '0000000009 00000 n ' '0000000060 00000 n ' '0000000117 00000 n ' '0000000251 00000 n ' '0000000345 00000 n ' 'trailer << /Root 1 0 R /Size 6
-            >>' 'startxref' '415' '%%EOF' > smoke.pdf
-          - lit parse smoke.pdf
+          interpreter: nu
+          content:
+            - lit --help
+            - if not (($"($env.PREFIX)/lib/libpdfium.dylib" | path exists) or ($"($env.PREFIX)/lib/libpdfium.so" | path exists) or ($"($env.PREFIX)/Library/bin/pdfium.dll" | path exists)) { exit 1 }
+            - let smoke_pdf = [
+            - "%PDF-1.1"
+            - "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj"
+            - "2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj"
+            - "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj"
+            - "4 0 obj << /Length 44 >> stream"
+            - "BT /F1 12 Tf 72 120 Td (Hello LiteParse) Tj ET"
+            - "endstream endobj"
+            - "5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj"
+            - "xref"
+            - "0 6"
+            - "0000000000 65535 f "
+            - "0000000009 00000 n "
+            - "0000000060 00000 n "
+            - "0000000117 00000 n "
+            - "0000000251 00000 n "
+            - "0000000345 00000 n "
+            - "trailer << /Root 1 0 R /Size 6 >>"
+            - "startxref"
+            - "415"
+            - "%%EOF"
+            - "]"
+            - $smoke_pdf | str join "\n" | save -f smoke.pdf
+            - lit parse smoke.pdf
       - package_contents:
           bin:
             - lit
@@ -124,40 +168,54 @@ outputs:
     build:
       skip: ppc64le
       script:
+        interpreter: nu
         env:
           CARGO_PROFILE_RELEASE_STRIP: symbols
           CARGO_PROFILE_RELEASE_LTO: fat
         content:
           - if: linux and x86_64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-x64"
-              - export PDFIUM_DYLIB="libpdfium.so"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-linux-x64"
+              - $env.PDFIUM_DYLIB = "libpdfium.so"
           - if: linux and aarch64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-linux-arm64"
-              - export PDFIUM_DYLIB="libpdfium.so"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-linux-arm64"
+              - $env.PDFIUM_DYLIB = "libpdfium.so"
           - if: osx and x86_64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-mac-x64"
-              - export PDFIUM_DYLIB="libpdfium.dylib"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-mac-x64"
+              - $env.PDFIUM_DYLIB = "libpdfium.dylib"
           - if: osx and arm64
             then:
-              - export PDFIUM_ROOT="${SRC_DIR}/pdfium-mac-arm64"
-              - export PDFIUM_DYLIB="libpdfium.dylib"
-          - export PDFIUM_LIB_PATH="${PDFIUM_ROOT}/lib"
-          - export PDFIUM_INCLUDE_PATH="${PDFIUM_ROOT}/include"
-          - export OPENSSL_DIR="${BUILD_PREFIX}"
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-mac-arm64"
+              - $env.PDFIUM_DYLIB = "libpdfium.dylib"
+          - if: win and x86_64
+            then:
+              - $env.PDFIUM_ROOT = $"($env.SRC_DIR)/pdfium-win-x64"
+              - $env.PDFIUM_DYLIB = "pdfium.dll"
+          - $env.PDFIUM_LIB_PATH = $"($env.PDFIUM_ROOT)/lib"
+          - $env.PDFIUM_INCLUDE_PATH = $"($env.PDFIUM_ROOT)/include"
+          - $env.OPENSSL_DIR = $env.BUILD_PREFIX
           - if: linux
             then:
-              - ln -sf "${CXX}" "${BUILD_PREFIX}/bin/g++"
-          - cp "${PDFIUM_LIB_PATH}/${PDFIUM_DYLIB}" "liteparse/${PDFIUM_DYLIB}"
+              - ln -sf $env.CXX $"($env.BUILD_PREFIX)/bin/g++"
+          - if: win
+            then:
+              - $env.CMAKE_GENERATOR = "Ninja"
+              - cp $"($env.PDFIUM_ROOT)/bin/($env.PDFIUM_DYLIB)" $"liteparse/($env.PDFIUM_DYLIB)"
+            else:
+              - cp $"($env.PDFIUM_LIB_PATH)/($env.PDFIUM_DYLIB)" $"liteparse/($env.PDFIUM_DYLIB)"
           - cargo fetch
           - cargo update --workspace --offline
           - maturin build --release --locked --no-default-features --features tesseract --compatibility linux --interpreter ${{ PYTHON }} --out dist
           - ${{ PYTHON }} -m pip install dist/*.whl -vv --no-deps --no-build-isolation
-          - rm -f "${PREFIX}/bin/lit"
-          - cp "${PDFIUM_ROOT}/LICENSE" PDFIUM-LICENSE
-          - cp -R "${PDFIUM_ROOT}/licenses" pdfium-licenses
+          - if: win
+            then:
+              - rm -f $"($env.PREFIX)/Scripts/lit.exe"
+            else:
+              - rm -f $"($env.PREFIX)/bin/lit"
+          - cp $"($env.PDFIUM_ROOT)/LICENSE" PDFIUM-LICENSE
+          - cp -r $"($env.PDFIUM_ROOT)/licenses" pdfium-licenses
           - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
 
     requirements:
@@ -173,9 +231,13 @@ outputs:
         - ${{ stdlib('c') }}
         - cmake
         - make
+        - nushell
         - cargo-bundle-licenses
         - openssl
         - pkg-config
+        - if: win
+          then:
+            - ninja
       host:
         - python
         - maturin

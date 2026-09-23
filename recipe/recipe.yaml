@@ -147,6 +147,9 @@ outputs:
             - "]"
             - $smoke_pdf | str join "\n" | save -f smoke.pdf
             - lit parse smoke.pdf
+        requirements:
+          build:
+            - nushell
       - package_contents:
           bin:
             - lit

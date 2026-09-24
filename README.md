@@ -26,17 +26,6 @@ Summary: Python bindings for LiteParse document parsing
 
 Development: https://github.com/run-llama/liteparse
 
-About liteparse-split
----------------------
-
-Home: https://github.com/run-llama/liteparse
-
-Package license: Apache-2.0
-
-Summary: Open-source document parsing with spatial text extraction and OCR processing
-
-Development: https://github.com/run-llama/liteparse
-
 Current build status
 ====================
 
